@@ -1,58 +1,79 @@
+https://github.com/Li-Chongyi/Zero-DCE
 
-## Environment Setup (Updated for PyTorch + CUDA 11.3)
+**第一步：环境配置**
 
 ```bash
-# 1. Create conda environment
-conda create --name zerodce_env python=3.8 -y
+# conda create --name zerodce_env opencv pytorch==1.0.0 torchvision==0.2.1 cuda100 python=3.7 -c pytorch
+# 原论文的太老了，升级了版本
+conda create -n zerodce_env python=3.8 -y
 conda activate zerodce_env
-
-# 2. Install PyTorch 1.11.0 with CUDA 11.3
-conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=11.3 -c pytorch -y
-
-# 3. Install other dependencies
-pip install opencv-python Pillow numpy
+pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 opencv-python --extra-index-url https://download.pytorch.org/whl/cu113 -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-### Test: 
+**第二步：准备数据集**
+
+- **测试数据**：低照度图片放入 `data/test_data/LIME` 等子文件夹（项目自带了一些测试集）。
+- **训练数据**：下载[训练数据](https://drive.google.com/file/d/1GAB3uGsmAyLgtDBDONbil08vVu5wJcG3/view) ，并解压到 `data/` 目录
+  -  SICE 数据集中的多曝光图像，训练图像共 2422 张(实际只有2002张)，验证集是剩余部分
+  - 200个epoch，每个epoch大概250个batch
+
+- 阅读顺序
+  - lowlight_test.py
+  - model.py
+  - MyLoss.py
+  - lowlight_train.py
+  - dataloader.py
 
 
-cd Zero-DCE_code
 ```
+
+├── data
+│   ├── test_data # testing data. You can make a new folder for your testing data, like LIME, MEF, and NPE.
+│   │   ├── LIME 
+│   │   └── MEF
+│   │   └── NPE
+│   └── train_data 
+├── lowlight_test.py # testing code
+├── lowlight_train.py # training code
+├── MyLoss.py
+├── model.py # Zero-DEC network
+├── dataloader.py
+├── snapshots
+│   ├── Epoch99.pth #  A pre-trained snapshot (Epoch99.pth)
+```
+
+**第三步：测试模型，初步跑通**
+
+项目提供了一个预训练模型 `snapshots/Epoch99.pth`。直接运行：
+```bash
 python lowlight_test.py 
 ```
-The script will process the images in the sub-folders of "test_data" folder and make a new folder "result" in the "data". You can find the enhanced images in the "result" folder.
+自动读取 `data/test_data/` 下所有子目录中的图片，进行增强后将结果保存在 `data/result/` 中
 
-### Train: 
-1) cd Zero-DCE_code
+**第四步：训练模型**
 
-2) download the training data <a href="https://drive.google.com/file/d/1GAB3uGsmAyLgtDBDONbil08vVu5wJcG3/view?usp=sharing">google drive</a> or <a href="https://pan.baidu.com/s/11-u_FZkJ8OgbqcG6763XyA">baidu cloud [password: 1234]</a>
-
-3) unzip and put the  downloaded "train_data" folder to "data" folder
-```
+```bash
 python lowlight_train.py 
 ```
-##  License
-The code is made available for academic research purpose only. Under Attribution-NonCommercial 4.0 International License.
+网络会自动开始训练，模型很小，训练速度很快
 
 
-## Bibtex
 
-```
-@inproceedings{Zero-DCE,
- author = {Guo, Chunle Guo and Li, Chongyi and Guo, Jichang and Loy, Chen Change and Hou, Junhui and Kwong, Sam and Cong, Runmin},
- title = {Zero-reference deep curve estimation for low-light image enhancement},
- booktitle = {Proceedings of the IEEE conference on computer vision and pattern recognition (CVPR)},
- pages    = {1780-1789},
- month = {June},
- year = {2020}
-}
-```
 
-(Full paper: http://openaccess.thecvf.com/content_CVPR_2020/papers/Guo_Zero-Reference_Deep_Curve_Estimation_for_Low-Light_Image_Enhancement_CVPR_2020_paper.pdf)
 
-## Contact
-If you have any questions, please contact Chongyi Li at lichongyi25@gmail.com or Chunle Guo at guochunle@tju.edu.cn.
+**第5步：消融实验**
 
-## TensorFlow Version 
-Thanks tuvovan (vovantu.hust@gmail.com) who re-produces our code by TF. The results of TF version look similar with our Pytorch version. But I do not have enough time to check the details.
-https://github.com/tuvovan/Zero_DCE_TF
+- 损失函数的消融分析
+  - $L_{spa}$：保持相邻区域的差异性
+  - $L_{color}$：矫正颜色偏差
+  - $L_{exp}$：控制亮度
+  - $L_{TV}$：维持相邻像素的平滑，防止出现生硬的边界
+  - **具体操作**：修改 lowlight_train.py
+    - 去掉 $L_{spa}$ 训练一个模型，观察模型结果是否会丢失空间结构的纹理。
+    - 去掉 $L_{TV}$ 训练一个模型，观察图片是否会出现网格状或不自然的分块伪影。
+    - 。。。
+- 网络结构的消融分析：DCENet默认迭代 8 次
+  - **迭代次数**
+  - **网络深度**
+
+
