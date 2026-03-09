@@ -1,0 +1,10 @@
+# Zero-DCE dependencies
+# Compatible with PyTorch 1.11.0 + CUDA 11.3
+# Install PyTorch via conda first:
+#   conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 cudatoolkit=11.3 -c pytorch
+
+torch>=1.11.0
+torchvision>=0.12.0
+numpy>=1.21.0
+opencv-python>=4.5.0
+Pillow>=8.0.0
