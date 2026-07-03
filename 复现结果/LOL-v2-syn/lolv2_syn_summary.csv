@@ -1,0 +1,2 @@
+dataset,num_images,psnr,ssim,lpips,params_m,macs_g,flops_g,flops_input_size,checkpoint,low_dir,gt_dir,output_dir,per_image_csv
+LOL-v2-syn,100,16.402332,0.807187,0.217667,0.079416,5.190451,10.380902,"1,3,256,256",snapshots/lolv2_syn/Epoch199.pth,data/LOL-v2/Synthetic/Test/Low,data/LOL-v2/Synthetic/Test/Normal,data/result_lol/lolv2_syn,data/result_lol/lolv2_syn_per_image.csv

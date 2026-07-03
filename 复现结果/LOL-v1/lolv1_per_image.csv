@@ -1,0 +1,16 @@
+image,psnr,ssim,lpips,enhanced_path,low_path,gt_path
+1.png,13.104651,0.587565,0.311212,data/result_lol/lolv1/1.png,data/LOL-v1/eval15/low/1.png,data/LOL-v1/eval15/high/1.png
+111.png,16.606815,0.649097,0.370468,data/result_lol/lolv1/111.png,data/LOL-v1/eval15/low/111.png,data/LOL-v1/eval15/high/111.png
+146.png,14.762822,0.719818,0.240693,data/result_lol/lolv1/146.png,data/LOL-v1/eval15/low/146.png,data/LOL-v1/eval15/high/146.png
+179.png,7.502932,0.448567,0.376213,data/result_lol/lolv1/179.png,data/LOL-v1/eval15/low/179.png,data/LOL-v1/eval15/high/179.png
+22.png,16.582675,0.619837,0.368704,data/result_lol/lolv1/22.png,data/LOL-v1/eval15/low/22.png,data/LOL-v1/eval15/high/22.png
+23.png,16.898714,0.448404,0.619603,data/result_lol/lolv1/23.png,data/LOL-v1/eval15/low/23.png,data/LOL-v1/eval15/high/23.png
+493.png,14.118643,0.422053,0.326755,data/result_lol/lolv1/493.png,data/LOL-v1/eval15/low/493.png,data/LOL-v1/eval15/high/493.png
+547.png,10.921412,0.460326,0.508220,data/result_lol/lolv1/547.png,data/LOL-v1/eval15/low/547.png,data/LOL-v1/eval15/high/547.png
+55.png,16.374020,0.448833,0.529701,data/result_lol/lolv1/55.png,data/LOL-v1/eval15/low/55.png,data/LOL-v1/eval15/high/55.png
+665.png,17.938266,0.367132,0.571755,data/result_lol/lolv1/665.png,data/LOL-v1/eval15/low/665.png,data/LOL-v1/eval15/high/665.png
+669.png,14.538786,0.542973,0.489723,data/result_lol/lolv1/669.png,data/LOL-v1/eval15/low/669.png,data/LOL-v1/eval15/high/669.png
+748.png,10.899708,0.460065,0.434858,data/result_lol/lolv1/748.png,data/LOL-v1/eval15/low/748.png,data/LOL-v1/eval15/high/748.png
+778.png,16.214543,0.468078,0.389668,data/result_lol/lolv1/778.png,data/LOL-v1/eval15/low/778.png,data/LOL-v1/eval15/high/778.png
+780.png,10.477225,0.320784,0.571419,data/result_lol/lolv1/780.png,data/LOL-v1/eval15/low/780.png,data/LOL-v1/eval15/high/780.png
+79.png,17.248919,0.680865,0.341503,data/result_lol/lolv1/79.png,data/LOL-v1/eval15/low/79.png,data/LOL-v1/eval15/high/79.png

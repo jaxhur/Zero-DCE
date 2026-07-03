@@ -3,3 +3,6 @@ data/*
 !data/.gitkeep
 snapshots/*
 !snapshots/Epoch99.pth
+复现结果/LOL-v1/lolv1/*.png
+复现结果/LOL-v2-real/lolv2_real/*.png
+复现结果/LOL-v2-syn/lolv2_syn/*.png

@@ -27,7 +27,7 @@ pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 ope
 **3、准备数据集**
 
 - **测试数据**：低照度图片放入 `data/test_data/LIME` 等子文件夹（项目自带了一些测试集）。
-- **训练数据**：下载[训练数据](https://drive.google.com/file/d/1GAB3uGsmAyLgtDBDONbil08vVu5wJcG3/view) ，并解压到 `data/` 目录
+- **训练数据**：下载[训练数据](https://drive.google.com/file/d/1GAB3uGsmAyLgtDBDONbil08vVu5wJcG3/view)，并解压到 `data/` 目录
   -  SICE 数据集中的多曝光图像，训练图像共 2422 张(实际只有2002张)，验证集是剩余部分
   - 200个epoch，每个epoch大概250个batch
 
@@ -56,7 +56,7 @@ pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 ope
 │   ├── Epoch99.pth #  A pre-trained snapshot (Epoch99.pth)
 ```
 
-**3、测试模型，初步跑通**
+**4、测试模型，初步跑通**
 
 项目提供了一个预训练模型 `snapshots/Epoch99.pth`。直接运行：
 ```bash
@@ -64,7 +64,7 @@ python lowlight_test.py
 ```
 自动读取 `data/test_data/` 下所有子目录中的图片，进行增强后将结果保存在 `data/result/` 中
 
-**4、训练模型**
+**5、训练模型**
 
 ```bash
 python lowlight_train.py 
@@ -163,6 +163,24 @@ snapshots\lolv2_real\Epoch199.pth
 ```
 pip install lpips
 
-py lowlight_test_lol.py --low_dir data\LOL-v1\eval15\low --gt_dir data\LOL-v1\eval15\high --weights snapshots\lolv1\Epoch199.pth --output_dir data\result_lol\lolv1 --dataset_name LOL-v1 --csv_path data\result_lol\lolv1_summary.csv --per_image_csv data\result_lol\lolv1_per_image.csv --flops_input_size 1,3,256,256
+```
+
+
+
+```
+
+python lowlight_test_lol.py --low_dir data/LOL-v1/eval15/low --gt_dir data/LOL-v1/eval15/high --weights snapshots/lolv1/Epoch199.pth --output_dir data/result_lol/lolv1 --dataset_name LOL-v1 --csv_path data/result_lol/lolv1_summary.csv --per_image_csv data/result_lol/lolv1_per_image.csv --flops_input_size 1,3,256,256
+```
+
+
+
+```
+python lowlight_test_lol.py --low_dir data/LOL-v2/Synthetic/Test/Low --gt_dir data/LOL-v2/Synthetic/Test/Normal --weights snapshots/lolv2_syn/Epoch199.pth --output_dir data/result_lol/lolv2_syn --dataset_name LOL-v2-syn --csv_path data/result_lol/lolv2_syn_summary.csv --per_image_csv data/result_lol/lolv2_syn_per_image.csv --flops_input_size 1,3,256,256
+```
+
+
+
+```
+python lowlight_test_lol.py --low_dir data/LOL-v2/Real_captured/Test/Low --gt_dir data/LOL-v2/Real_captured/Test/Normal --weights snapshots/lolv2_real/Epoch199.pth --output_dir data/result_lol/lolv2_real --dataset_name LOL-v2-real --csv_path data/result_lol/lolv2_real_summary.csv --per_image_csv data/result_lol/lolv2_real_per_image.csv --flops_input_size 1,3,256,256
 ```
 

@@ -1,0 +1,2 @@
+dataset,num_images,psnr,ssim,lpips,params_m,macs_g,flops_g,flops_input_size,checkpoint,low_dir,gt_dir,output_dir,per_image_csv
+LOL-v1,15,14.279342,0.509626,0.430033,0.079416,5.190451,10.380902,"1,3,256,256",snapshots/lolv1/Epoch199.pth,data/LOL-v1/eval15/low,data/LOL-v1/eval15/high,data/result_lol/lolv1,data/result_lol/lolv1_per_image.csv

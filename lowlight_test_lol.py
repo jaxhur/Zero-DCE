@@ -186,6 +186,24 @@ def calculate_model_complexity(dce_net, input_size, device):
 	return params_m, macs_g, flops_g
 
 
+def print_summary(summary):
+	"""Print average metrics and model complexity after all images are evaluated."""
+	print("\n========== Average / Summary ==========")
+	print("Dataset: {}".format(summary["dataset"]))
+	print("Images: {}".format(summary["num_images"]))
+	print("Average PSNR: {}".format(summary["psnr"]))
+	print("Average SSIM: {}".format(summary["ssim"]))
+	print("Average LPIPS: {}".format(summary["lpips"] or "N/A"))
+	print("Params(M): {}".format(summary["params_m"]))
+	print("MACs(G): {}".format(summary["macs_g"]))
+	print("GFLOPs: {}".format(summary["gflops"]))
+	print("TFLOPs: {}".format(summary["tflops"]))
+	print("Complexity input size: {}".format(summary["flops_input_size"]))
+	print("Checkpoint: {}".format(summary["checkpoint"]))
+	print("Enhanced images: {}".format(summary["output_dir"]))
+	print("=======================================\n")
+
+
 def load_dce_net(weights_path, device):
 	"""Load a Zero-DCE checkpoint into enhance_net_nopool."""
 	dce_net = model.enhance_net_nopool().to(device)
@@ -223,6 +241,8 @@ def write_summary_csv(csv_path, summary):
 		"params_m",
 		"macs_g",
 		"flops_g",
+		"gflops",
+		"tflops",
 		"flops_input_size",
 		"checkpoint",
 		"low_dir",
@@ -275,15 +295,16 @@ def evaluate(config):
 			if lpips_value is not None:
 				lpips_values.append(lpips_value)
 
-			print(
-				"{} | PSNR: {:.4f} | SSIM: {:.4f} | LPIPS: {} | {:.4f}s".format(
-					relative_path,
-					psnr_value,
-					ssim_value,
-					"{:.4f}".format(lpips_value) if lpips_value is not None else "N/A",
-					elapsed_time,
+			if not config.quiet_per_image:
+				print(
+					"{} | PSNR: {:.4f} | SSIM: {:.4f} | LPIPS: {} | {:.4f}s".format(
+						relative_path,
+						psnr_value,
+						ssim_value,
+						"{:.4f}".format(lpips_value) if lpips_value is not None else "N/A",
+						elapsed_time,
+					)
 				)
-			)
 
 			per_image_rows.append(
 				{
@@ -310,6 +331,8 @@ def evaluate(config):
 		"params_m": "{:.6f}".format(params_m),
 		"macs_g": "{:.6f}".format(macs_g),
 		"flops_g": "{:.6f}".format(flops_g),
+		"gflops": "{:.6f}".format(flops_g),
+		"tflops": "{:.6f}".format(flops_g / 1000.0),
 		"flops_input_size": config.flops_input_size,
 		"checkpoint": config.weights,
 		"low_dir": config.low_dir,
@@ -318,6 +341,7 @@ def evaluate(config):
 		"per_image_csv": per_image_csv,
 	}
 	write_summary_csv(summary_csv, summary)
+	print_summary(summary)
 	print("Summary CSV saved to:", summary_csv)
 	print("Per-image CSV saved to:", per_image_csv)
 	print("Enhanced images saved to:", config.output_dir)
@@ -337,6 +361,7 @@ def parse_args():
 	parser.add_argument("--lpips_net", type=str, default="alex", choices=["alex", "vgg", "squeeze"], help="LPIPS backbone.")
 	parser.add_argument("--no_lpips", action="store_true", help="Skip LPIPS when the lpips package is unavailable.")
 	parser.add_argument("--flops_input_size", type=str, default="1,3,256,256", help="Input size used for FLOPs, e.g. 1,3,256,256.")
+	parser.add_argument("--quiet_per_image", action="store_true", help="Only print the final average summary to terminal.")
 	return parser.parse_args()
 
 
