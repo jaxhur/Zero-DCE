@@ -1,4 +1,5 @@
 __pycache__/
-data/
+data/*
+!data/.gitkeep
 snapshots/*
 !snapshots/Epoch99.pth

@@ -28,6 +28,15 @@ def weights_init(m):
 		m.bias.data.fill_(0)
 
 
+def format_duration(seconds):
+	"""Format seconds as HH:MM:SS for training progress logs."""
+	seconds = max(0, int(seconds))
+	hours = seconds // 3600
+	minutes = (seconds % 3600) // 60
+	seconds = seconds % 60
+	return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+
 
 def train(config):
 
@@ -54,6 +63,13 @@ def train(config):
 	optimizer = torch.optim.Adam(DCE_net.parameters(), lr=config.lr, weight_decay=config.weight_decay)
 	
 	DCE_net.train()
+	steps_per_epoch = len(train_loader)
+	total_iterations = steps_per_epoch * config.num_epochs
+	if total_iterations == 0:
+		print("No training images found. Please check --lowlight_images_path.")
+		return
+
+	training_start_time = time.time()
 	for epoch in range(config.num_epochs):
 		for iteration, img_lowlight in enumerate(train_loader):
 
@@ -74,7 +90,24 @@ def train(config):
 			optimizer.step()
 
 			if ((iteration+1) % config.display_iter) == 0: # 每10次迭代打印一次损失
-				print("Loss at iteration", iteration+1, ":", loss.item())
+				finished_iterations = epoch * steps_per_epoch + iteration + 1
+				elapsed_time = time.time() - training_start_time
+				average_iter_time = elapsed_time / finished_iterations
+				remaining_time = average_iter_time * (total_iterations - finished_iterations)
+				print(
+					"Epoch [{}/{}] Iteration [{}/{}] Total [{}/{}] "
+					"Loss: {:.6f} Elapsed: {} ETA: {}".format(
+						epoch + 1,
+						config.num_epochs,
+						iteration + 1,
+						steps_per_epoch,
+						finished_iterations,
+						total_iterations,
+						loss.item(),
+						format_duration(elapsed_time),
+						format_duration(remaining_time),
+					)
+				)
 			if ((iteration+1) % config.snapshot_iter) == 0: # 每1次epoch保存一次模型
 				snapshot_path = os.path.join(config.snapshots_folder, "Epoch" + str(epoch) + '.pth')
 				torch.save(DCE_net.state_dict(), snapshot_path) 		

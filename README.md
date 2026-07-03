@@ -2,17 +2,29 @@
 
 > 后续同一个作者还发了[Zero-DCE++](https://ieeexplore.ieee.org/document/9369102)，进行了改进
 
-**1、环境配置**
+
+
+# 原论文
+
+**1、下载代码**
+
+```shell
+git clone https://github.com/jaxhur/Zero-DCE.git
+```
+
+**2、环境配置**
 
 ```bash
 # conda create --name zerodce_env opencv pytorch==1.0.0 torchvision==0.2.1 cuda100 python=3.7 -c pytorch
 # 原论文的太老了，升级了版本
-conda create -n zerodce_env python=3.8 -y
-conda activate zerodce_env
+cd /workspace/Zero-DCE
+
+conda create -n zerodce python=3.8 -y
+conda activate zerodce
 pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 opencv-python --extra-index-url https://download.pytorch.org/whl/cu113 -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-**2、准备数据集**
+**3、准备数据集**
 
 - **测试数据**：低照度图片放入 `data/test_data/LIME` 等子文件夹（项目自带了一些测试集）。
 - **训练数据**：下载[训练数据](https://drive.google.com/file/d/1GAB3uGsmAyLgtDBDONbil08vVu5wJcG3/view) ，并解压到 `data/` 目录
@@ -80,11 +92,77 @@ python lowlight_train.py
   - **迭代次数**
   - **网络深度**
 
-# 问题
 
-TODO：
 
-- PSNR/SSIM的evaluate
-- Loss曲线、Loss保存到csv文件
-- Log打印和输出文件
+# LOLv1
+
+```shell
+git clone https://github.com/jaxhur/Zero-DCE.git
+```
+
+
+
+```shell
+# conda create --name zerodce_env opencv pytorch==1.0.0 torchvision==0.2.1 cuda100 python=3.7 -c pytorch
+# 原论文的太老了，升级了版本
+cd /workspace/Zero-DCE
+
+conda create -n zerodce python=3.8 -y
+conda activate zerodce
+pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 opencv-python --extra-index-url https://download.pytorch.org/whl/cu113 -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
+
+
+
+```
+mkdir data
+
+python3 -m pip install -U gdown
+apt install -y unzip
+
+
+cd ./data
+# LOL-v1
+gdown "https://drive.google.com/uc?id=1mAN3ll5wWwt1Xz0C7uio31-NJu-50S8Z"
+# LOL-v2原始
+# gdown "https://drive.google.com/uc?id=1dzLJFz0svHXYHvAe-Tl52miChhF4BXXE"
+# LOL-v2重命名
+gdown "https://drive.google.com/uc?id=1L0UnJg6gZ4Eb7It2EuNxP0L3lQNmKMaP"
+
+# AUtoDL
+cp /root/autodl-fs/LOL-v1.zip ./BioIR/Single_Composite/datasets
+cp /root/autodl-fs/LOL-v1.zip ./BioIR/Single_Composite/datasets
+
+unzip LOL-v1.zip -d LOL-v1
+unzip LOL-v2-renamed.zip -d LOL-v2
+```
+
+训练：
+
+```
+cd ../ 
+python lowlight_train.py --lowlight_images_path data/LOL-v1/our485/low --snapshots_folder snapshots/lolv1
+
+python lowlight_train.py --lowlight_images_path data/LOL-v2/Synthetic/Train/Low --snapshots_folder snapshots/lolv2_syn
+
+python lowlight_train.py --lowlight_images_path data/LOL-v2/Real_captured/Train/Low --snapshots_folder snapshots/lolv2_real
+```
+
+默认训练 `200` epoch：
+
+```
+snapshots\lolv1\Epoch199.pth
+snapshots\lolv2_syn\Epoch199.pth
+snapshots\lolv2_real\Epoch199.pth
+```
+
+
+
+测试命令
+
+```
+pip install lpips
+
+py lowlight_test_lol.py --low_dir data\LOL-v1\eval15\low --gt_dir data\LOL-v1\eval15\high --weights snapshots\lolv1\Epoch199.pth --output_dir data\result_lol\lolv1 --dataset_name LOL-v1 --csv_path data\result_lol\lolv1_summary.csv --per_image_csv data\result_lol\lolv1_per_image.csv --flops_input_size 1,3,256,256
+```
 
