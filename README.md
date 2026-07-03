@@ -100,7 +100,7 @@ python lowlight_train.py
 git clone https://github.com/jaxhur/Zero-DCE.git
 ```
 
-
+环境：
 
 ```shell
 # conda create --name zerodce_env opencv pytorch==1.0.0 torchvision==0.2.1 cuda100 python=3.7 -c pytorch
@@ -112,9 +112,9 @@ conda activate zerodce
 pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 opencv-python --extra-index-url https://download.pytorch.org/whl/cu113 -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
+数据：
 
-
-```
+```shell
 mkdir data
 
 python3 -m pip install -U gdown
@@ -129,23 +129,14 @@ gdown "https://drive.google.com/uc?id=1mAN3ll5wWwt1Xz0C7uio31-NJu-50S8Z"
 # LOL-v2重命名
 gdown "https://drive.google.com/uc?id=1L0UnJg6gZ4Eb7It2EuNxP0L3lQNmKMaP"
 
-# AUtoDL
-cp /root/autodl-fs/LOL-v1.zip ./BioIR/Single_Composite/datasets
-cp /root/autodl-fs/LOL-v1.zip ./BioIR/Single_Composite/datasets
-
 unzip LOL-v1.zip -d LOL-v1
 unzip LOL-v2-renamed.zip -d LOL-v2
 ```
 
 训练：
 
-```
-cd ../ 
+```shell
 python lowlight_train.py --lowlight_images_path data/LOL-v1/our485/low --snapshots_folder snapshots/lolv1
-
-python lowlight_train.py --lowlight_images_path data/LOL-v2/Synthetic/Train/Low --snapshots_folder snapshots/lolv2_syn
-
-python lowlight_train.py --lowlight_images_path data/LOL-v2/Real_captured/Train/Low --snapshots_folder snapshots/lolv2_real
 ```
 
 默认训练 `200` epoch：
@@ -156,29 +147,64 @@ snapshots\lolv2_syn\Epoch199.pth
 snapshots\lolv2_real\Epoch199.pth
 ```
 
+测试
 
-
-测试命令
+- PSNR：14.279342
+- SSIM：0.509626
+- LPIPS：0.430033
+- Params：0.079416
+- FLOPS：10.380902
+- flops_input_size：1,3,256,256
 
 ```
 pip install lpips
-
-```
-
-
-
-```
 
 python lowlight_test_lol.py --low_dir data/LOL-v1/eval15/low --gt_dir data/LOL-v1/eval15/high --weights snapshots/lolv1/Epoch199.pth --output_dir data/result_lol/lolv1 --dataset_name LOL-v1 --csv_path data/result_lol/lolv1_summary.csv --per_image_csv data/result_lol/lolv1_per_image.csv --flops_input_size 1,3,256,256
 ```
 
 
 
+
+
+# LOLv2-real
+
+训练：200epoch
+
+```
+python lowlight_train.py --lowlight_images_path data/LOL-v2/Synthetic/Train/Low --snapshots_folder snapshots/lolv2_syn
+```
+
+测试：
+
+- PSNR：12.398917
+- SSIM：0.447077
+- LPIPS：0.487163
+- Params：0.079416
+- FLOPS：10.380902
+- flops_input_size：1,3,256,256
+
 ```
 python lowlight_test_lol.py --low_dir data/LOL-v2/Synthetic/Test/Low --gt_dir data/LOL-v2/Synthetic/Test/Normal --weights snapshots/lolv2_syn/Epoch199.pth --output_dir data/result_lol/lolv2_syn --dataset_name LOL-v2-syn --csv_path data/result_lol/lolv2_syn_summary.csv --per_image_csv data/result_lol/lolv2_syn_per_image.csv --flops_input_size 1,3,256,256
 ```
 
 
+
+# LOLv2-syn
+
+训练：200epoch
+
+```
+python lowlight_train.py --lowlight_images_path data/LOL-v2/Real_captured/Train/Low --snapshots_folder snapshots/lolv2_real
+```
+
+测试：
+
+- PSNR：16.402332
+- SSIM：0.807187
+- LPIPS：0.217667
+- Params：0.079416
+- FLOPS：10.380902
+- flops_input_size：1,3,256,256
 
 ```
 python lowlight_test_lol.py --low_dir data/LOL-v2/Real_captured/Test/Low --gt_dir data/LOL-v2/Real_captured/Test/Normal --weights snapshots/lolv2_real/Epoch199.pth --output_dir data/result_lol/lolv2_real --dataset_name LOL-v2-real --csv_path data/result_lol/lolv2_real_summary.csv --per_image_csv data/result_lol/lolv2_real_per_image.csv --flops_input_size 1,3,256,256
