@@ -13,12 +13,23 @@ import cv2
 random.seed(1143)
 
 RESAMPLE = getattr(getattr(Image, "Resampling", Image), "LANCZOS", 1)
+SUPPORTED_IMAGE_EXTENSIONS = (".jpg", ".jpeg", ".png")
+
+
+def is_supported_image(file_name):
+	"""Return True when file_name is a supported training image."""
+	return os.path.splitext(file_name)[1].lower() in SUPPORTED_IMAGE_EXTENSIONS
 
 
 def populate_train_list(lowlight_images_path):
 
 
-	image_list_lowlight = glob.glob(os.path.join(lowlight_images_path, "*.jpg"))
+	image_list_lowlight = [
+		os.path.join(lowlight_images_path, file_name)
+		for file_name in sorted(os.listdir(lowlight_images_path))
+		if os.path.isfile(os.path.join(lowlight_images_path, file_name))
+		and is_supported_image(file_name)
+	]
 
 	train_list = image_list_lowlight
 
@@ -45,7 +56,7 @@ class lowlight_loader(data.Dataset):
 
 		data_lowlight_path = self.data_list[index]
 		
-		data_lowlight = Image.open(data_lowlight_path)
+		data_lowlight = Image.open(data_lowlight_path).convert("RGB")
 		
 		data_lowlight = data_lowlight.resize((self.size,self.size), RESAMPLE)
 		# Convert to numpy array and normalize
